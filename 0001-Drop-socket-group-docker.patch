@@ -1,0 +1,25 @@
+From 550f4e234337a4119b22283e171ae720986cbb4d Mon Sep 17 00:00:00 2001
+From: Dimitri John Ledkov <dimitri.j.ledkov@intel.com>
+Date: Mon, 7 Sep 2015 13:56:58 +0100
+Subject: [PATCH] Drop socket group docker.
+Organization: Intel Corporation (UK) Ltd. - Co. Reg. #1134945 - Pipers Way, Swindon SN3 1RJ
+
+---
+ contrib/init/systemd/docker.socket | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/contrib/init/systemd/docker.socket b/contrib/init/systemd/docker.socket
+index 7dd9509..531e78a 100644
+--- a/contrib/init/systemd/docker.socket
++++ b/contrib/init/systemd/docker.socket
+@@ -6,7 +6,6 @@ PartOf=docker.service
+ ListenStream=/var/run/docker.sock
+ SocketMode=0660
+ SocketUser=root
+-SocketGroup=docker
+ 
+ [Install]
+ WantedBy=sockets.target
+-- 
+2.1.4
+
