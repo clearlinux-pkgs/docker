@@ -1,7 +1,7 @@
 From e45d0eb532a799073ec4f17be432f2d08a6c2a14 Mon Sep 17 00:00:00 2001
 From: Dimitri John Ledkov <dimitri.j.ledkov@intel.com>
 Date: Tue, 9 Jun 2015 11:05:16 +0100
-Subject: [PATCH 2/2] Clear Containers for Docker Engine execution driver
+Subject: [PATCH 2/4] Clear Containers for Docker Engine execution driver
 Organization: Intel Corporation (UK) Ltd. - Co. Reg. #1134945 - Pipers Way, Swindon SN3 1RJ
 
 Signed-off-by: Dimitri John Ledkov <dimitri.j.ledkov@intel.com>

@@ -1,7 +1,7 @@
 From 6bf1c41b77542242dc9cbc945b8a013d39382f03 Mon Sep 17 00:00:00 2001
 From: Vincent Batts <vbatts@redhat.com>
 Date: Fri, 7 Aug 2015 10:18:20 -0400
-Subject: [PATCH 1/2] devicemapper: fix zero-sized field access
+Subject: [PATCH 1/4] devicemapper: fix zero-sized field access
 Organization: Intel Corporation (UK) Ltd. - Co. Reg. #1134945 - Pipers Way, Swindon SN3 1RJ
 
 Fixes: #15279
