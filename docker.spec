@@ -1,6 +1,10 @@
+%if "%{_vendor}" == "clr"
 Name     : docker
+%else
+Name     : clear-containers-docker
+%endif
 Version  : 1.8.1
-Release  : 36
+Release  : 37
 URL      : https://github.com/docker/docker/archive/v1.8.1.tar.gz
 Source0  : https://github.com/docker/docker/archive/v1.8.1.tar.gz
 Summary  : the open-source application container engine
@@ -12,6 +16,7 @@ Patch401 : 0001-devicemapper-fix-zero-sized-field-access.patch
 Patch402 : 0002-Clear-Containers-for-Docker-Engine-execution-driver.patch
 Patch403 : 0003-Properly-find-the-right-Endpoint-to-steal-networking.patch
 Patch404 : 0004-Fix-ups.patch
+Patch405 : 0005-Change-version-tag.patch
 
 
 BuildRequires : go
@@ -21,6 +26,9 @@ BuildRequires : pkgconfig(devmapper)
 BuildRequires : btrfs-progs-devel
 Requires : kvmtool
 Requires : linux-container
+%if "%{_vendor}" != "clr"
+Conflicts : docker
+%endif
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -28,7 +36,7 @@ Requires : linux-container
 %define __strip /bin/true
 
 # This matches v1.8.1 tag/tarball from https://github.com/docker/docker/releases
-%define commit_id d12ea79
+%define commit_id d12ea79-clear-containers
 
 
 %description
@@ -44,6 +52,7 @@ Docker Core Engine
 %patch402 -p1
 %patch403 -p1
 %patch404 -p1
+%patch405 -p1
 
 %build
 export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 GOROOT=/usr/lib/golang
@@ -54,8 +63,8 @@ export PATH="$PATH:$(pwd)"
 
 %install
 rm -rf %{buildroot}
-install -D ./bundles/%{version}/dynbinary/docker-%{version} %{buildroot}%{_bindir}/docker
-install -D ./bundles/%{version}/dynbinary/dockerinit-%{version} %{buildroot}%{_prefix}/lib/docker/dockerinit
+install -D ./bundles/latest/dynbinary/docker %{buildroot}%{_bindir}/docker
+install -D ./bundles/latest/dynbinary/dockerinit %{buildroot}%{_prefix}/lib/docker/dockerinit
 install -m 0644 -D ./contrib/init/systemd/docker.service %{buildroot}%{_prefix}/lib/systemd/system/docker.service
 install -m 0644 -D ./contrib/init/systemd/docker.socket %{buildroot}%{_prefix}/lib/systemd/system/docker.socket
 install -d %{buildroot}%{_mandir}/man1 %{buildroot}%{_mandir}/man5
