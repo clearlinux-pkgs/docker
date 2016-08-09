@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 1.12.0
-Release  : 42
+Release  : 43
 URL      : https://github.com/docker/docker/archive/v1.12.0.tar.gz
 Source0  : https://github.com/docker/docker/archive/v1.12.0.tar.gz
 Summary  : the open-source application container engine
@@ -18,7 +18,7 @@ BuildRequires : golang-github-shurcooL-sanitized_anchor_name
 Requires : gzip
 Requires : containerd
 Requires : cc-oci-runtime
-Patch1   : 0001-add-cc-oci-runtime-as-default-runtime.patch
+Patch1   : 0001-two-systemd-files-to-start-docker-with-proper-runtim.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -63,10 +63,14 @@ ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
 # install systemd unit files
 install -m 0644 -D ./contrib/init/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
 install -m 0644 -D ./contrib/init/systemd/docker.socket %{buildroot}/usr/lib/systemd/system/docker.socket
+install -m 0644 -D ./contrib/init/systemd/docker-cor.service %{buildroot}/usr/lib/systemd/system/docker-cor.service
+install -m 0644 -D ./contrib/init/systemd/docker-cor.socket %{buildroot}/usr/lib/systemd/system/docker-cor.socket
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 ln -s ../docker.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker.socket
+ln -s ../docker-cor.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker-cor.socket
 mkdir -p %{buildroot}/usr/lib/systemd/system/multi-user.target.wants
 ln -s ../docker.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker.service
+ln -s ../docker-cor.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker-cor.service
 
 # install man pages
 install -d %{buildroot}/usr/share/man/man1 %{buildroot}/usr/share/man/man5 %{buildroot}/usr/share/man/man8
