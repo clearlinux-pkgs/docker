@@ -19,7 +19,7 @@ index c3f3472..9d67ae4 100644
  # exists and systemd currently does not support the cgroup feature set required
  # for containers run by docker
 -ExecStart=/usr/bin/dockerd -H fd://
-+ExecStart=/usr/bin/dockerd -H fd:// --storage-driver=overlay --add-runtime cor=cc-oci-runtime --default-runtime=cor
++ExecStart=/usr/bin/dockerd -H fd:// --storage-driver=overlay
  ExecReload=/bin/kill -s HUP $MAINPID
  # Having non-zero Limit*s causes performance problems due to accounting overhead
  # in the kernel. We recommend using cgroups to do container-local accounting.
