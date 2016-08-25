@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 1.12.1
-Release  : 44
+Release  : 45
 URL      : https://github.com/docker/docker/archive/v1.12.1.tar.gz
 Source0  : https://github.com/docker/docker/archive/v1.12.1.tar.gz
 Summary  : the open-source application container engine
