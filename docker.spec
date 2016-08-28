@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 1.12.1
-Release  : 45
+Release  : 46
 URL      : https://github.com/docker/docker/archive/v1.12.1.tar.gz
 Source0  : https://github.com/docker/docker/archive/v1.12.1.tar.gz
 Summary  : the open-source application container engine
@@ -68,9 +68,9 @@ install -m 0644 -D ./contrib/init/systemd/docker-cor.socket %{buildroot}/usr/lib
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 ln -s ../docker.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker.socket
 ln -s ../docker-cor.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker-cor.socket
-mkdir -p %{buildroot}/usr/lib/systemd/system/multi-user.target.wants
-ln -s ../docker.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker.service
-ln -s ../docker-cor.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker-cor.service
+#mkdir -p %{buildroot}/usr/lib/systemd/system/multi-user.target.wants
+#ln -s ../docker.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker.service
+#ln -s ../docker-cor.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker-cor.service
 
 # install man pages
 install -d %{buildroot}/usr/share/man/man1 %{buildroot}/usr/share/man/man5 %{buildroot}/usr/share/man/man8
@@ -91,5 +91,5 @@ chmod -x %{buildroot}/usr/share/man/man*/*
 /usr/lib/systemd/system/*.socket
 /usr/lib/systemd/system/*.service
 /usr/lib/systemd/system/*/*.socket
-/usr/lib/systemd/system/*/*.service
+#/usr/lib/systemd/system/*/*.service
 /usr/share/man/man*/*
