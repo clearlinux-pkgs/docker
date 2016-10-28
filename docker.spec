@@ -1,8 +1,8 @@
 Name     : docker
-Version  : 1.12.3
+Version  : 1.12.1
 Release  : 46
-URL      : https://github.com/docker/docker/archive/v1.12.3.tar.gz
-Source0  : https://github.com/docker/docker/archive/v1.12.3.tar.gz
+URL      : https://github.com/docker/docker/archive/v1.12.1.tar.gz
+Source0  : https://github.com/docker/docker/archive/v1.12.1.tar.gz
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -31,7 +31,7 @@ Patch1   : 0001-two-systemd-files-to-start-docker-with-proper-runtim.patch
 Docker is an open source project to pack, ship and run any application as a lightweight container.
 
 %prep
-%setup -q -n docker-1.12.3
+%setup -q -n docker-1.12.1
 %patch1 -p1
 
 %build
