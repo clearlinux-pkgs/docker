@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 1.12.1
-Release  : 47
+Release  : 48
 URL      : https://github.com/docker/docker/archive/v1.12.1.tar.gz
 Source0  : https://github.com/docker/docker/archive/v1.12.1.tar.gz
 Summary  : the open-source application container engine
@@ -41,7 +41,7 @@ export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 GOROOT=/usr/lib/golang
 ./hack/make.sh dynbinary
 
 # generate man pages
-go build github.com/cpuguy83/go-md2man
+GOPATH=/usr/lib/golang-dist go build github.com/cpuguy83/go-md2man
 PATH="$PATH:$(pwd)" ./man/md2man-all.sh
 
 %install
