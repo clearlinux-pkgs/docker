@@ -18,7 +18,6 @@ BuildRequires : golang-github-shurcooL-sanitized_anchor_name
 Requires : runc
 Requires : gzip
 Requires : containerd
-Requires : cc-oci-runtime
 Patch1   : 0001-two-systemd-files-to-start-docker-with-proper-runtim.patch
 
 # don't strip, these are not ordinary object files
