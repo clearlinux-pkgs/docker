@@ -15,6 +15,9 @@ BuildRequires : gzip
 BuildRequires : golang-github-cpuguy83-go-md2man
 BuildRequires : golang-github-russross-blackfriday
 BuildRequires : golang-github-shurcooL-sanitized_anchor_name
+Requires : iptables
+Requires : git
+Requires : xz
 Requires : runc
 Requires : gzip
 Requires : containerd
