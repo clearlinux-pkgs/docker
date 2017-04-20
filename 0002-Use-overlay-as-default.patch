@@ -1,0 +1,26 @@
+From 5aea47e840082b49cac5cb753bf693b99d228899 Mon Sep 17 00:00:00 2001
+From: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
+Date: Fri, 21 Apr 2017 10:23:33 -0500
+Subject: [PATCH] Use overlay as default
+
+Signed-off-by: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
+---
+ contrib/init/systemd/docker.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/contrib/init/systemd/docker.service b/contrib/init/systemd/docker.service
+index c3f3472..762adad 100644
+--- a/contrib/init/systemd/docker.service
++++ b/contrib/init/systemd/docker.service
+@@ -9,7 +9,7 @@ Type=notify
+ # the default is not to use systemd for cgroups because the delegate issues still
+ # exists and systemd currently does not support the cgroup feature set required
+ # for containers run by docker
+-ExecStart=/usr/bin/dockerd -H fd://
++ExecStart=/usr/bin/dockerd -H fd:// --storage-driver=overlay
+ ExecReload=/bin/kill -s HUP $MAINPID
+ # Having non-zero Limit*s causes performance problems due to accounting overhead
+ # in the kernel. We recommend using cgroups to do container-local accounting.
+-- 
+2.9.3
+

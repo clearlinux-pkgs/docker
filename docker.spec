@@ -1,8 +1,8 @@
 Name     : docker
 Version  : 1.12.6
 Release  : 55
-URL      : https://github.com/docker/docker/archive/v1.12.6.tar.gz
-Source0  : https://github.com/docker/docker/archive/v1.12.6.tar.gz
+URL      : https://github.com/moby/moby/archive/v1.12.6.tar.gz
+Source0  : https://github.com/moby/moby/archive/v1.12.6.tar.gz
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -21,7 +21,8 @@ Requires : xz
 Requires : runc
 Requires : gzip
 Requires : containerd
-Patch1   : 0001-two-systemd-files-to-start-docker-with-proper-runtim.patch
+Patch1   : 0001-Automatic-Clear-Containers-runtime-detection.patch
+Patch2   : 0002-Use-overlay-as-default.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -34,8 +35,9 @@ Patch1   : 0001-two-systemd-files-to-start-docker-with-proper-runtim.patch
 Docker is an open source project to pack, ship and run any application as a lightweight container.
 
 %prep
-%setup -q -n docker-1.12.6
+%setup -q -n moby-1.12.6
 %patch1 -p1
+%patch2 -p1
 
 %build
 mkdir -p src/github.com/docker/
@@ -66,8 +68,6 @@ ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
 # install systemd unit files
 install -m 0644 -D ./contrib/init/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
 install -m 0644 -D ./contrib/init/systemd/docker.socket %{buildroot}/usr/lib/systemd/system/docker.socket
-install -m 0644 -D ./contrib/init/systemd/docker-cor.service %{buildroot}/usr/lib/systemd/system/docker-cor.service
-install -m 0644 -D ./contrib/init/systemd/docker-cor.socket %{buildroot}/usr/lib/systemd/system/docker-cor.socket
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 ln -s ../docker.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker.socket
 ln -s ../docker-cor.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker-cor.socket

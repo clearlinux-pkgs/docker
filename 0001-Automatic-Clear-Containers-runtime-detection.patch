@@ -1,0 +1,167 @@
+From 732a4d7be648697e938b12b60382b6d923137b13 Mon Sep 17 00:00:00 2001
+From: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
+Date: Thu, 20 Apr 2017 00:01:32 +0000
+Subject: [PATCH] Automatic Clear Containers runtime detection
+
+This patch adds automatic runtime choose with 2 steps:
+
+1. Register Clear containers runtime
+Clear Containers runtime will be registered if:
+
+- clear containers runtime is installed ( cc-oci-runtime)
+- kvm is enabled ( /dev/kvm )
+
+2. Choose default runtime
+
+Clear containers runtime will be default if :
+
+- clear containers is registered (previous step)
+- kvm is enabled (/dev/kvm exist)
+- A default runtime was not defined explicitly :
+	docker --default-runtime other-runtime
+
+Otherwise the stock (runc) docker runtime will be default.
+
+Signed-off-by: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
+---
+ cmd/dockerd/daemon.go |  1 +
+ daemon/cc-daemon.go   | 69 +++++++++++++++++++++++++++++++++++++++++++++++++++
+ daemon/config.go      |  5 ++++
+ daemon/config_unix.go |  2 +-
+ daemon/daemon_unix.go |  3 ---
+ 5 files changed, 76 insertions(+), 4 deletions(-)
+ create mode 100644 daemon/cc-daemon.go
+
+diff --git a/cmd/dockerd/daemon.go b/cmd/dockerd/daemon.go
+index 0d3cace..da8edc9 100644
+--- a/cmd/dockerd/daemon.go
++++ b/cmd/dockerd/daemon.go
+@@ -142,6 +142,7 @@ func (cli *DaemonCli) start() (err error) {
+ 	if err != nil {
+ 		return err
+ 	}
++	daemon.SelectDefaultRuntime(cliConfig)
+ 	cli.Config = cliConfig
+ 
+ 	if cli.Config.Debug {
+diff --git a/daemon/cc-daemon.go b/daemon/cc-daemon.go
+new file mode 100644
+index 0000000..d93e15d
+--- /dev/null
++++ b/daemon/cc-daemon.go
+@@ -0,0 +1,69 @@
++package daemon
++
++import (
++	"github.com/Sirupsen/logrus"
++	"github.com/docker/engine-api/types"
++	"os"
++	"os/exec"
++)
++
++const (
++	clearContainersRuntimeName   = "cor"
++	clearContainersRuntimeBinary = "cc-oci-runtime"
++)
++
++func hasKVM() bool {
++	if _, err := os.Stat("/dev/kvm"); err == nil {
++		return true
++	}
++	return false
++}
++
++func hasClearContainers() bool {
++	if _, err := exec.LookPath(clearContainersRuntimeBinary); err == nil {
++		return true
++	}
++	return false
++
++}
++
++// SetupClearContainersRuntime will register clear-containers runtime if:
++// - kvm is enabled
++// - Clear Containers runtime is installed
++// - Clear Containers runtime was not registered previously
++func SetupClearContainersRuntime(config *Config) bool {
++
++	runtimes := config.GetAllRuntimes()
++	_, ok := runtimes[clearContainersRuntimeName]
++	if !ok && hasKVM() && hasClearContainers() {
++		ccRuntime := types.Runtime{Path: clearContainersRuntimeBinary}
++		config.Runtimes[clearContainersRuntimeName] = ccRuntime
++		return true
++	}
++	return false
++}
++
++// SelectDefaultRuntime will choose  what runtime use:
++// - If default runtime defined, do nothing
++// Clear Containers is default if:
++// - clear-containers runtime is registered
++// - No default runtime was explicitly defined
++// stockRuntimeName (runc ) is default if :
++// Otherwise stockRuntimeName will be default
++func SelectDefaultRuntime(config *Config) {
++
++	if config.DefaultRuntime != "" {
++		logrus.Infof("Using defined Default rutime (%s)", config.DefaultRuntime)
++		return
++	}
++
++	runtimes := config.GetAllRuntimes()
++	if _, ccRegistered := runtimes[clearContainersRuntimeName]; ccRegistered {
++		config.DefaultRuntime = clearContainersRuntimeName
++		logrus.Infof("Using Clear Containers (%s) as Default rutime", config.DefaultRuntime)
++		return
++	}
++	config.DefaultRuntime = stockRuntimeName
++	logrus.Infof("Using %s as Default rutime", config.DefaultRuntime)
++	return
++}
+diff --git a/daemon/config.go b/daemon/config.go
+index bf568ef..2cf4074 100644
+--- a/daemon/config.go
++++ b/daemon/config.go
+@@ -442,6 +442,11 @@ func ValidateConfiguration(config *Config) error {
+ 		}
+ 	}
+ 
++	// Add Clear containers runtime if possible
++	if SetupClearContainersRuntime(config) {
++		logrus.Infof("Clear Containers runtime added")
++	}
++
+ 	if defaultRuntime := config.GetDefaultRuntimeName(); defaultRuntime != "" && defaultRuntime != stockRuntimeName {
+ 		runtimes := config.GetAllRuntimes()
+ 		if _, ok := runtimes[defaultRuntime]; !ok {
+diff --git a/daemon/config_unix.go b/daemon/config_unix.go
+index 526ec3b..0104f54 100644
+--- a/daemon/config_unix.go
++++ b/daemon/config_unix.go
+@@ -90,7 +90,7 @@ func (config *Config) InstallFlags(cmd *flag.FlagSet, usageFn func(string) strin
+ 	cmd.BoolVar(&config.LiveRestore, []string{"-live-restore"}, false, usageFn("Enable live restore of docker when containers are still running"))
+ 	config.Runtimes = make(map[string]types.Runtime)
+ 	cmd.Var(runconfigopts.NewNamedRuntimeOpt("runtimes", &config.Runtimes, stockRuntimeName), []string{"-add-runtime"}, usageFn("Register an additional OCI compatible runtime"))
+-	cmd.StringVar(&config.DefaultRuntime, []string{"-default-runtime"}, stockRuntimeName, usageFn("Default OCI runtime for containers"))
++	cmd.StringVar(&config.DefaultRuntime, []string{"-default-runtime"}, "", usageFn("Default OCI runtime for containers"))
+ 	cmd.IntVar(&config.OOMScoreAdjust, []string{"-oom-score-adjust"}, -500, usageFn("Set the oom_score_adj for the daemon"))
+ 
+ 	config.attachExperimentalFlags(cmd, usageFn)
+diff --git a/daemon/daemon_unix.go b/daemon/daemon_unix.go
+index f266912..a0b43f9 100644
+--- a/daemon/daemon_unix.go
++++ b/daemon/daemon_unix.go
+@@ -573,9 +573,6 @@ func verifyDaemonSettings(config *Config) error {
+ 		}
+ 	}
+ 
+-	if config.DefaultRuntime == "" {
+-		config.DefaultRuntime = stockRuntimeName
+-	}
+ 	if config.Runtimes == nil {
+ 		config.Runtimes = make(map[string]types.Runtime)
+ 	}
+-- 
+2.9.3
+
