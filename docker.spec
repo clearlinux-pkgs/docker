@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 1.12.6
-Release  : 55
+Release  : 56
 URL      : https://github.com/moby/moby/archive/v1.12.6.tar.gz
 Source0  : https://github.com/moby/moby/archive/v1.12.6.tar.gz
 Summary  : the open-source application container engine
