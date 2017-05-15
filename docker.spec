@@ -1,8 +1,10 @@
 Name     : docker
-Version  : 1.12.6
+Version  : 17.05.0
 Release  : 57
-URL      : https://github.com/moby/moby/archive/v1.12.6.tar.gz
-Source0  : https://github.com/moby/moby/archive/v1.12.6.tar.gz
+URL      : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
+Source0  : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
+%global commit_libnetwork 0f534354b813003a754606689722fe253101bc4e
+Source1  : https://github.com/docker/libnetwork/archive/0f534354b813003a754606689722fe253101bc4e.tar.gz
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -35,9 +37,11 @@ Patch2   : 0002-Use-overlay-as-default.patch
 Docker is an open source project to pack, ship and run any application as a lightweight container.
 
 %prep
-%setup -q -n moby-1.12.6
+%setup -q -n moby-17.05.0-ce
 %patch1 -p1
 %patch2 -p1
+# docker-proxy
+tar -xf %{SOURCE1}
 
 %build
 mkdir -p src/github.com/docker/
@@ -49,13 +53,22 @@ export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 GOROOT=/usr/lib/golang
 GOPATH=/usr/lib/golang-dist go build github.com/cpuguy83/go-md2man
 PATH="$PATH:$(pwd)" ./man/md2man-all.sh
 
+# docker-proxy
+pushd libnetwork-%{commit_libnetwork}
+mkdir -p src/github.com/docker/libnetwork
+ln -s $(pwd)/* src/github.com/docker/libnetwork
+export GOPATH=$(pwd)
+go build -ldflags="-linkmode=external" -o docker-proxy github.com/docker/libnetwork/cmd/proxy
+popd
+
 %install
 rm -rf %{buildroot}
 # install binary
 install -d %{buildroot}/usr/bin
-install -p -m 755 bundles/latest/dynbinary-client/docker-%{version} %{buildroot}/usr/bin/docker
-install -p -m 755 bundles/latest/dynbinary-daemon/dockerd-%{version} %{buildroot}/usr/bin/dockerd
-install -p -m 755 bundles/latest/dynbinary-daemon/docker-proxy-%{version} %{buildroot}/usr/bin/docker-proxy
+install -p -m 755 bundles/latest/dynbinary-client/docker-%{version}-ce %{buildroot}/usr/bin/docker
+install -p -m 755 bundles/latest/dynbinary-daemon/dockerd-%{version}-ce  %{buildroot}/usr/bin/dockerd
+#install docker-proxy
+install -p -m 755 libnetwork-%{commit_libnetwork}/docker-proxy  %{buildroot}/usr/bin/docker-proxy
 
 # install containerd
 ln -s /usr/bin/containerd %{buildroot}/usr/bin/docker-containerd
@@ -86,11 +99,11 @@ chmod -x %{buildroot}/usr/share/man/man*/*
 %defattr(-,root,root,-)
 /usr/bin/docker
 /usr/bin/dockerd
-/usr/bin/docker-proxy
 /usr/bin/docker-containerd
 /usr/bin/docker-containerd-shim
 /usr/bin/docker-containerd-ctr
 /usr/bin/docker-runc
+/usr/bin/docker-proxy
 /usr/lib/systemd/system/*.socket
 /usr/lib/systemd/system/*.service
 /usr/lib/systemd/system/*/*.socket
