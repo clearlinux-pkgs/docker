@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 17.05.0
-Release  : 58
+Release  : 59
 URL      : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 Source0  : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 %global commit_libnetwork 0f534354b813003a754606689722fe253101bc4e
@@ -83,10 +83,6 @@ install -m 0644 -D ./contrib/init/systemd/docker.service %{buildroot}/usr/lib/sy
 install -m 0644 -D ./contrib/init/systemd/docker.socket %{buildroot}/usr/lib/systemd/system/docker.socket
 mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
 ln -s ../docker.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker.socket
-ln -s ../docker-cor.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker-cor.socket
-#mkdir -p %{buildroot}/usr/lib/systemd/system/multi-user.target.wants
-#ln -s ../docker.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker.service
-#ln -s ../docker-cor.service %{buildroot}/usr/lib/systemd/system/multi-user.target.wants/docker-cor.service
 
 # install man pages
 install -d %{buildroot}/usr/share/man/man1 %{buildroot}/usr/share/man/man5 %{buildroot}/usr/share/man/man8
@@ -104,8 +100,7 @@ chmod -x %{buildroot}/usr/share/man/man*/*
 /usr/bin/docker-containerd-ctr
 /usr/bin/docker-runc
 /usr/bin/docker-proxy
-/usr/lib/systemd/system/*.socket
-/usr/lib/systemd/system/*.service
-/usr/lib/systemd/system/*/*.socket
-#/usr/lib/systemd/system/*/*.service
+/usr/lib/systemd/system/docker.socket
+/usr/lib/systemd/system/docker.service
+/usr/lib/systemd/system/sockets.target.wants/docker.socket
 /usr/share/man/man*/*
