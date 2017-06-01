@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 17.05.0
-Release  : 60
+Release  : 61
 URL      : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 Source0  : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 %global commit_libnetwork 0f534354b813003a754606689722fe253101bc4e
@@ -48,7 +48,6 @@ export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 GOROOT=/usr/lib/golang
 ./hack/make.sh dynbinary
 
 # generate man pages
-GOPATH=/usr/lib/golang-dist go build github.com/cpuguy83/go-md2man
 PATH="$PATH:$(pwd)" ./man/md2man-all.sh
 
 # docker-proxy
