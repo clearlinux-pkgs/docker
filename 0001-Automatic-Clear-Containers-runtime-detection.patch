@@ -1,4 +1,4 @@
-From 80c2a16f3d628856c2f95433424f84583c70724b Mon Sep 17 00:00:00 2001
+From afd1705154bf72b5bd4694a37fd2b9e6c9aec887 Mon Sep 17 00:00:00 2001
 From: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
 Date: Sun, 14 May 2017 23:27:26 +0000
 Subject: [PATCH] dockerd: Automatic Clear Contaiers runtime detection
@@ -7,14 +7,14 @@ Signed-off-by: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
 ---
  cmd/dockerd/config_common_unix.go |  2 +-
  cmd/dockerd/daemon.go             |  1 +
- daemon/config/cc-daemon.go        | 69 +++++++++++++++++++++++++++++++++++++++
+ daemon/config/cc-daemon.go        | 74 +++++++++++++++++++++++++++++++++++++++
  daemon/config/config.go           |  5 +++
  daemon/daemon_unix.go             |  4 +++
- 5 files changed, 80 insertions(+), 1 deletion(-)
+ 5 files changed, 85 insertions(+), 1 deletion(-)
  create mode 100644 daemon/config/cc-daemon.go
 
 diff --git a/cmd/dockerd/config_common_unix.go b/cmd/dockerd/config_common_unix.go
-index b29307b59..851ddd994 100644
+index b29307b..851ddd9 100644
 --- a/cmd/dockerd/config_common_unix.go
 +++ b/cmd/dockerd/config_common_unix.go
 @@ -29,6 +29,6 @@ func installUnixConfigFlags(conf *config.Config, flags *pflag.FlagSet) {
@@ -26,7 +26,7 @@ index b29307b59..851ddd994 100644
  
  }
 diff --git a/cmd/dockerd/daemon.go b/cmd/dockerd/daemon.go
-index 56405541b..9e8ca9b46 100644
+index 5640554..9e8ca9b 100644
 --- a/cmd/dockerd/daemon.go
 +++ b/cmd/dockerd/daemon.go
 @@ -132,6 +132,7 @@ func (cli *DaemonCli) start(opts daemonOptions) (err error) {
@@ -39,10 +39,10 @@ index 56405541b..9e8ca9b46 100644
  		debug.Enable()
 diff --git a/daemon/config/cc-daemon.go b/daemon/config/cc-daemon.go
 new file mode 100644
-index 000000000..28a4775de
+index 0000000..76f362a
 --- /dev/null
 +++ b/daemon/config/cc-daemon.go
-@@ -0,0 +1,69 @@
+@@ -0,0 +1,74 @@
 +package config
 +
 +import (
@@ -80,6 +80,11 @@ index 000000000..28a4775de
 +
 +	runtimes := config.GetAllRuntimes()
 +	_, ok := runtimes[clearContainersRuntimeName]
++
++	if config.Runtimes == nil {
++		config.Runtimes = make(map[string]types.Runtime)
++	}
++
 +	if !ok && hasKVM() && hasClearContainers() {
 +		ccRuntime := types.Runtime{Path: clearContainersRuntimeBinary}
 +		config.Runtimes[clearContainersRuntimeName] = ccRuntime
@@ -113,7 +118,7 @@ index 000000000..28a4775de
 +	return
 +}
 diff --git a/daemon/config/config.go b/daemon/config/config.go
-index 134fc671d..747136666 100644
+index 134fc67..7471366 100644
 --- a/daemon/config/config.go
 +++ b/daemon/config/config.go
 @@ -493,6 +493,11 @@ func Validate(config *Config) error {
@@ -129,7 +134,7 @@ index 134fc671d..747136666 100644
  		runtimes := config.GetAllRuntimes()
  		if _, ok := runtimes[defaultRuntime]; !ok {
 diff --git a/daemon/daemon_unix.go b/daemon/daemon_unix.go
-index 0f342bcfd..1a7df435d 100644
+index 0f342bc..1a7df43 100644
 --- a/daemon/daemon_unix.go
 +++ b/daemon/daemon_unix.go
 @@ -562,6 +562,10 @@ func verifyPlatformContainerSettings(daemon *Daemon, hostConfig *containertypes.
@@ -144,5 +149,5 @@ index 0f342bcfd..1a7df435d 100644
  		hostConfig.Runtime = daemon.configStore.GetDefaultRuntimeName()
  	}
 -- 
-2.13.0
+2.9.4
 
