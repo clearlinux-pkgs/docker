@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 17.05.0
-Release  : 62
+Release  : 63
 URL      : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 Source0  : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 %global commit_libnetwork 0f534354b813003a754606689722fe253101bc4e
@@ -21,6 +21,11 @@ Requires : xz
 Requires : runc
 Requires : gzip
 Requires : containerd
+Requires : LVM2
+Requires : btrfs-progs
+Requires : e2fsprogs
+Requires : e2fsprogs-extras
+Requires : xfsprogs
 Patch1   : 0001-Automatic-Clear-Containers-runtime-detection.patch
 Patch2   : 0002-Use-overlay-as-default.patch
 
