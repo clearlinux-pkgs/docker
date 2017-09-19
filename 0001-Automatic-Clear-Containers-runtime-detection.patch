@@ -1,16 +1,16 @@
-From afd1705154bf72b5bd4694a37fd2b9e6c9aec887 Mon Sep 17 00:00:00 2001
+From 415416ac46b99c6fda3aa3c19edb4f57277e12c7 Mon Sep 17 00:00:00 2001
 From: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
-Date: Sun, 14 May 2017 23:27:26 +0000
-Subject: [PATCH] dockerd: Automatic Clear Contaiers runtime detection
+Date: Tue, 19 Sep 2017 14:43:55 -0500
+Subject: [PATCH] Automatic Clear Containers runtime detection
 
 Signed-off-by: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
 ---
- cmd/dockerd/config_common_unix.go |  2 +-
- cmd/dockerd/daemon.go             |  1 +
- daemon/config/cc-daemon.go        | 74 +++++++++++++++++++++++++++++++++++++++
- daemon/config/config.go           |  5 +++
- daemon/daemon_unix.go             |  4 +++
- 5 files changed, 85 insertions(+), 1 deletion(-)
+ cmd/dockerd/config_common_unix.go |   2 +-
+ cmd/dockerd/daemon.go             |   1 +
+ daemon/config/cc-daemon.go        | 100 ++++++++++++++++++++++++++++++++++++++
+ daemon/config/config.go           |   5 ++
+ daemon/daemon_unix.go             |   4 ++
+ 5 files changed, 111 insertions(+), 1 deletion(-)
  create mode 100644 daemon/config/cc-daemon.go
 
 diff --git a/cmd/dockerd/config_common_unix.go b/cmd/dockerd/config_common_unix.go
@@ -39,10 +39,10 @@ index 5640554..9e8ca9b 100644
  		debug.Enable()
 diff --git a/daemon/config/cc-daemon.go b/daemon/config/cc-daemon.go
 new file mode 100644
-index 0000000..76f362a
+index 0000000..a297eeb
 --- /dev/null
 +++ b/daemon/config/cc-daemon.go
-@@ -0,0 +1,74 @@
+@@ -0,0 +1,100 @@
 +package config
 +
 +import (
@@ -53,8 +53,10 @@ index 0000000..76f362a
 +)
 +
 +const (
-+	clearContainersRuntimeName   = "cor"
-+	clearContainersRuntimeBinary = "cc-oci-runtime"
++	clearContainers2RuntimeName   = "cor"
++	clearContainers3RuntimeName   = "cc-runtime"
++	clearContainers2RuntimeBinary = "cc-oci-runtime"
++	clearContainers3RuntimeBinary = "cc-runtime"
 +)
 +
 +func hasKVM() bool {
@@ -64,12 +66,18 @@ index 0000000..76f362a
 +	return false
 +}
 +
-+func hasClearContainers() bool {
-+	if _, err := exec.LookPath(clearContainersRuntimeBinary); err == nil {
++func hasClearContainers2() bool {
++	if _, err := exec.LookPath(clearContainers2RuntimeBinary); err == nil {
 +		return true
 +	}
 +	return false
++}
 +
++func hasClearContainers3() bool {
++	if _, err := exec.LookPath(clearContainers3RuntimeBinary); err == nil {
++		return true
++	}
++	return false
 +}
 +
 +// SetupClearContainersRuntime will register clear-containers runtime if:
@@ -79,18 +87,28 @@ index 0000000..76f362a
 +func SetupClearContainersRuntime(config *Config) bool {
 +
 +	runtimes := config.GetAllRuntimes()
-+	_, ok := runtimes[clearContainersRuntimeName]
++	addedCC := false
++
++	if !hasKVM() {
++		return false
++	}
 +
 +	if config.Runtimes == nil {
 +		config.Runtimes = make(map[string]types.Runtime)
 +	}
 +
-+	if !ok && hasKVM() && hasClearContainers() {
-+		ccRuntime := types.Runtime{Path: clearContainersRuntimeBinary}
-+		config.Runtimes[clearContainersRuntimeName] = ccRuntime
-+		return true
++	if _, ok := runtimes[clearContainers2RuntimeName]; !ok && hasClearContainers2() {
++		ccRuntime := types.Runtime{Path: clearContainers2RuntimeBinary}
++		config.Runtimes[clearContainers2RuntimeName] = ccRuntime
++		addedCC = true
 +	}
-+	return false
++
++	if _, ok := runtimes[clearContainers3RuntimeName]; !ok && hasClearContainers3() {
++		ccRuntime := types.Runtime{Path: clearContainers3RuntimeBinary}
++		config.Runtimes[clearContainers3RuntimeName] = ccRuntime
++		addedCC = true
++	}
++	return addedCC
 +}
 +
 +// SelectDefaultRuntime will choose  what runtime use:
@@ -98,8 +116,7 @@ index 0000000..76f362a
 +// Clear Containers is default if:
 +// - clear-containers runtime is registered
 +// - No default runtime was explicitly defined
-+// stockRuntimeName (runc ) is default if :
-+// Otherwise stockRuntimeName will be default
++// stockRuntimeName (runc) is default in any other case
 +func SelectDefaultRuntime(config *Config) {
 +
 +	if config.DefaultRuntime != "" {
@@ -108,11 +125,20 @@ index 0000000..76f362a
 +	}
 +
 +	runtimes := config.GetAllRuntimes()
-+	if _, ccRegistered := runtimes[clearContainersRuntimeName]; ccRegistered {
-+		config.DefaultRuntime = clearContainersRuntimeName
-+		logrus.Infof("Using Clear Containers (%s) as Default rutime", config.DefaultRuntime)
++	// Check if CC 3.x  was added, and use it
++	if _, ccRegistered := runtimes[clearContainers3RuntimeName]; ccRegistered {
++		config.DefaultRuntime = clearContainers3RuntimeName
++		logrus.Infof("Using Clear Containers 3 (%s) as Default rutime", config.DefaultRuntime)
 +		return
 +	}
++
++	// Check if CC 2.x was added, and use it
++	if _, ccRegistered := runtimes[clearContainers2RuntimeName]; ccRegistered {
++		config.DefaultRuntime = clearContainers2RuntimeName
++		logrus.Infof("Using Clear Containers 2 (%s) as Default rutime", config.DefaultRuntime)
++		return
++	}
++
 +	config.DefaultRuntime = StockRuntimeName
 +	logrus.Infof("Using %s as Default rutime", config.DefaultRuntime)
 +	return
@@ -149,5 +175,5 @@ index 0f342bc..1a7df43 100644
  		hostConfig.Runtime = daemon.configStore.GetDefaultRuntimeName()
  	}
 -- 
-2.9.4
+2.9.5
 
