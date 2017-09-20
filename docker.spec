@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 17.05.0
-Release  : 63
+Release  : 64
 URL      : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 Source0  : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 %global commit_libnetwork 0f534354b813003a754606689722fe253101bc4e
