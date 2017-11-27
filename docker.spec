@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 17.05.0
-Release  : 68
+Release  : 69
 URL      : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 Source0  : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
 %global commit_libnetwork 0f534354b813003a754606689722fe253101bc4e
@@ -28,6 +28,7 @@ Requires : e2fsprogs-extras
 Requires : xfsprogs
 Patch1   : 0001-Automatic-Clear-Containers-runtime-detection.patch
 Patch2   : 0002-Use-overlay2-as-the-default-storage-driver.patch
+Patch3   : 0003-Disable-use-of-the-Clear-Containers-runtime.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -43,6 +44,7 @@ Docker is an open source project to pack, ship and run any application as a ligh
 %setup -q -n moby-17.05.0-ce
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 # docker-proxy
 tar -xf %{SOURCE1}
 
