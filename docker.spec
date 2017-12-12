@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 17.05.0
-Release  : 70
-URL      : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
-Source0  : https://github.com/moby/moby/archive/v17.05.0-ce.tar.gz
-%global commit_libnetwork 0f534354b813003a754606689722fe253101bc4e
-Source1  : https://github.com/docker/libnetwork/archive/0f534354b813003a754606689722fe253101bc4e.tar.gz
+Version  : 17.09.1
+Release  : 71
+URL      : https://github.com/docker/docker-ce/archive/v17.09.1-ce.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v17.09.1-ce.tar.gz
+%global commit_libnetwork 7b2b1feb1de4817d522cc372af149ff48d25028e
+Source1  : https://github.com/docker/libnetwork/archive/7b2b1feb1de4817d522cc372af149ff48d25028e.tar.gz
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -34,26 +34,38 @@ Patch2   : 0002-Use-overlay2-as-the-default-storage-driver.patch
 %define debug_package %{nil}
 %define __strip /bin/true
 
-%global commit_id 7392c3b0ce0f9d3e918a321c66668c5d1ef4f689
+%global commit_id 19e2cf6259bd7f027a3fff180876a22945ce4ba8
+%global docker_src_dir %{name}-ce-%{version}-ce
 
 %description
 Docker is an open source project to pack, ship and run any application as a lightweight container.
 
 %prep
-%setup -q -n moby-17.05.0-ce
+%setup -q -n %docker_src_dir
 %patch1 -p1
 %patch2 -p1
 # docker-proxy
 tar -xf %{SOURCE1}
 
 %build
-mkdir -p src/github.com/docker/
-ln -s $(pwd) src/github.com/docker/docker
-export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 GOROOT=/usr/lib/golang
-./hack/make.sh dynbinary
+export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs'
+export GOPATH=/go
 
+mkdir -p /go/src/github.com/docker/
+rm -fr /go/src/github.com/docker/cli
+ln -s /builddir/build/BUILD/%docker_src_dir/components/cli /go/src/github.com/docker/cli
+pushd /go/src/github.com/docker/cli
+make VERSION=%version GITCOMMIT=%commit_id dynbinary manpages
+popd
+rm -fr /go/src/github.com/docker/engine
+ln -s /builddir/build/BUILD/%docker_src_dir/components/engine /go/src/github.com/docker/engine
+pushd /go/src/github.com/docker/engine
+
+#./hack/dockerfile/install-binaries.sh runc-dynamic containerd-dynamic proxy-dynamic tini
+VERSION=%version ./hack/make.sh dynbinary
+popd
 # generate man pages
-PATH="$PATH:$(pwd)" ./man/md2man-all.sh
+#PATH="$PATH:$(pwd)" ./man/md2man-all.sh
 
 # docker-proxy
 pushd libnetwork-%{commit_libnetwork}
@@ -67,8 +79,8 @@ popd
 rm -rf %{buildroot}
 # install binary
 install -d %{buildroot}/usr/bin
-install -p -m 755 bundles/latest/dynbinary-client/docker-%{version}-ce %{buildroot}/usr/bin/docker
-install -p -m 755 bundles/latest/dynbinary-daemon/dockerd-%{version}-ce  %{buildroot}/usr/bin/dockerd
+install -p -m 755 components/cli/build/docker-linux-amd64 %{buildroot}/usr/bin/docker
+install -p -m 755 components/engine/bundles/%{version}-ce/dynbinary-daemon/dockerd-%{version}-ce  %{buildroot}/usr/bin/dockerd
 #install docker-proxy
 install -p -m 755 libnetwork-%{commit_libnetwork}/docker-proxy  %{buildroot}/usr/bin/docker-proxy
 
@@ -81,16 +93,13 @@ ln -s /usr/bin/containerd-ctr %{buildroot}/usr/bin/docker-containerd-ctr
 ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
 
 # install systemd unit files
-install -m 0644 -D ./contrib/init/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
-install -m 0644 -D ./contrib/init/systemd/docker.socket %{buildroot}/usr/lib/systemd/system/docker.socket
-mkdir -p %{buildroot}/usr/lib/systemd/system/sockets.target.wants
-ln -s ../docker.socket %{buildroot}/usr/lib/systemd/system/sockets.target.wants/docker.socket
+install -m 0644 -D ./components/packaging/rpm/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
 
 # install man pages
 install -d %{buildroot}/usr/share/man/man1 %{buildroot}/usr/share/man/man5 %{buildroot}/usr/share/man/man8
-install ./man/man1/* %{buildroot}/usr/share/man/man1
-install ./man/man5/* %{buildroot}/usr/share/man/man5
-install ./man/man8/* %{buildroot}/usr/share/man/man8
+install ./components/cli/man/man1/* %{buildroot}/usr/share/man/man1
+install ./components/cli/man/man5/* %{buildroot}/usr/share/man/man5
+install ./components/cli/man/man8/* %{buildroot}/usr/share/man/man8
 chmod -x %{buildroot}/usr/share/man/man*/*
 
 %files
@@ -102,7 +111,5 @@ chmod -x %{buildroot}/usr/share/man/man*/*
 /usr/bin/docker-containerd-ctr
 /usr/bin/docker-runc
 /usr/bin/docker-proxy
-/usr/lib/systemd/system/docker.socket
 /usr/lib/systemd/system/docker.service
-/usr/lib/systemd/system/sockets.target.wants/docker.socket
 /usr/share/man/man*/*

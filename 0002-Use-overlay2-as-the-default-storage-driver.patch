@@ -1,28 +1,28 @@
-From 4006ed26e4278efb82732422d34203e9a0d5e1a5 Mon Sep 17 00:00:00 2001
+From e540b5542eef23a7b600e774bd65d1da37d9e0a8 Mon Sep 17 00:00:00 2001
 From: William Douglas <william.douglas@intel.com>
-Date: Fri, 17 Nov 2017 19:43:56 +0000
-Subject: [PATCH] Use overlay2 as the default storage driver
+Date: Mon, 11 Dec 2017 19:14:57 +0000
+Subject: [PATCH 2/2] Use overlay2 as the default storage driver
 
 overlay was causing issues with the 4.14 kernel resulting in memory
 exhaustion and symlink resolution problems. Switching to overlay2
 resolves these issues at a slight performance cost.
 ---
- contrib/init/systemd/docker.service | 2 +-
+ components/packaging/rpm/systemd/docker.service | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/contrib/init/systemd/docker.service b/contrib/init/systemd/docker.service
-index 5174631..e577ce9 100644
---- a/contrib/init/systemd/docker.service
-+++ b/contrib/init/systemd/docker.service
-@@ -10,7 +10,7 @@ Type=notify
+diff --git a/components/packaging/rpm/systemd/docker.service b/components/packaging/rpm/systemd/docker.service
+index 6c60646..4123588 100644
+--- a/components/packaging/rpm/systemd/docker.service
++++ b/components/packaging/rpm/systemd/docker.service
+@@ -9,7 +9,7 @@ Type=notify
  # the default is not to use systemd for cgroups because the delegate issues still
  # exists and systemd currently does not support the cgroup feature set required
  # for containers run by docker
--ExecStart=/usr/bin/dockerd -H fd://
-+ExecStart=/usr/bin/dockerd -H fd:// --storage-driver=overlay2
+-ExecStart=/usr/bin/dockerd
++ExecStart=/usr/bin/dockerd --storage-driver=overlay2
  ExecReload=/bin/kill -s HUP $MAINPID
- LimitNOFILE=1048576
  # Having non-zero Limit*s causes performance problems due to accounting overhead
+ # in the kernel. We recommend using cgroups to do container-local accounting.
 -- 
 2.15.0
 

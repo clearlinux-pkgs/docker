@@ -1,22 +1,21 @@
-From 415416ac46b99c6fda3aa3c19edb4f57277e12c7 Mon Sep 17 00:00:00 2001
+From 18ad959860acd698250de6a6388e1ed0cccb4ba4 Mon Sep 17 00:00:00 2001
 From: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
-Date: Tue, 19 Sep 2017 14:43:55 -0500
-Subject: [PATCH] Automatic Clear Containers runtime detection
+Date: Tue, 12 Dec 2017 21:39:18 +0000
+Subject: [PATCH 1/2] Automatic Clear Containers runtime detection
 
-Signed-off-by: Jose Carlos Venegas Munoz <jose.carlos.venegas.munoz@intel.com>
 ---
- cmd/dockerd/config_common_unix.go |   2 +-
- cmd/dockerd/daemon.go             |   1 +
- daemon/config/cc-daemon.go        | 100 ++++++++++++++++++++++++++++++++++++++
- daemon/config/config.go           |   5 ++
- daemon/daemon_unix.go             |   4 ++
- 5 files changed, 111 insertions(+), 1 deletion(-)
- create mode 100644 daemon/config/cc-daemon.go
+ .../engine/cmd/dockerd/config_common_unix.go       |  2 +-
+ components/engine/cmd/dockerd/daemon.go            |  2 +
+ components/engine/daemon/config/cc-daemon.go       | 98 ++++++++++++++++++++++
+ components/engine/daemon/config/config.go          |  5 ++
+ components/engine/daemon/daemon_unix.go            |  4 +
+ 5 files changed, 110 insertions(+), 1 deletion(-)
+ create mode 100644 components/engine/daemon/config/cc-daemon.go
 
-diff --git a/cmd/dockerd/config_common_unix.go b/cmd/dockerd/config_common_unix.go
+diff --git a/components/engine/cmd/dockerd/config_common_unix.go b/components/engine/cmd/dockerd/config_common_unix.go
 index b29307b..851ddd9 100644
---- a/cmd/dockerd/config_common_unix.go
-+++ b/cmd/dockerd/config_common_unix.go
+--- a/components/engine/cmd/dockerd/config_common_unix.go
++++ b/components/engine/cmd/dockerd/config_common_unix.go
 @@ -29,6 +29,6 @@ func installUnixConfigFlags(conf *config.Config, flags *pflag.FlagSet) {
  	flags.BoolVar(&conf.BridgeConfig.InterContainerCommunication, "icc", true, "Enable inter-container communication")
  	flags.Var(opts.NewIPOpt(&conf.BridgeConfig.DefaultIP, "0.0.0.0"), "ip", "Default IP when binding container ports")
@@ -25,28 +24,29 @@ index b29307b..851ddd9 100644
 +	flags.StringVar(&conf.DefaultRuntime, "default-runtime", "", "Default OCI runtime for containers")
  
  }
-diff --git a/cmd/dockerd/daemon.go b/cmd/dockerd/daemon.go
-index 5640554..9e8ca9b 100644
---- a/cmd/dockerd/daemon.go
-+++ b/cmd/dockerd/daemon.go
-@@ -132,6 +132,7 @@ func (cli *DaemonCli) start(opts daemonOptions) (err error) {
- 			getDaemonConfDir(cli.Config.Root),
- 			cliflags.DefaultTrustKeyFile)
+diff --git a/components/engine/cmd/dockerd/daemon.go b/components/engine/cmd/dockerd/daemon.go
+index edf8f40..e608301 100644
+--- a/components/engine/cmd/dockerd/daemon.go
++++ b/components/engine/cmd/dockerd/daemon.go
+@@ -466,6 +466,8 @@ func loadDaemonCliConfig(opts *daemonOptions) (*config.Config, error) {
+ 		return nil, err
  	}
-+	config.SelectDefaultRuntime(cli.Config)
  
- 	if cli.Config.Debug {
- 		debug.Enable()
-diff --git a/daemon/config/cc-daemon.go b/daemon/config/cc-daemon.go
++	config.SelectDefaultRuntime(conf)
++
+ 	if conf.V2Only == false {
+ 		logrus.Warnf(`The "disable-legacy-registry" option is deprecated and wil be removed in Docker v17.12. Interacting with legacy (v1) registries will no longer be supported in Docker v17.12"`)
+ 	}
+diff --git a/components/engine/daemon/config/cc-daemon.go b/components/engine/daemon/config/cc-daemon.go
 new file mode 100644
-index 0000000..a297eeb
+index 0000000..4282b26
 --- /dev/null
-+++ b/daemon/config/cc-daemon.go
-@@ -0,0 +1,100 @@
++++ b/components/engine/daemon/config/cc-daemon.go
+@@ -0,0 +1,98 @@
 +package config
 +
 +import (
-+	"github.com/Sirupsen/logrus"
++	"github.com/sirupsen/logrus"
 +	"github.com/docker/docker/api/types"
 +	"os"
 +	"os/exec"
@@ -85,10 +85,8 @@ index 0000000..a297eeb
 +// - Clear Containers runtime is installed
 +// - Clear Containers runtime was not registered previously
 +func SetupClearContainersRuntime(config *Config) bool {
-+
 +	runtimes := config.GetAllRuntimes()
 +	addedCC := false
-+
 +	if !hasKVM() {
 +		return false
 +	}
@@ -143,12 +141,12 @@ index 0000000..a297eeb
 +	logrus.Infof("Using %s as Default rutime", config.DefaultRuntime)
 +	return
 +}
-diff --git a/daemon/config/config.go b/daemon/config/config.go
-index 134fc67..7471366 100644
---- a/daemon/config/config.go
-+++ b/daemon/config/config.go
-@@ -493,6 +493,11 @@ func Validate(config *Config) error {
- 		}
+diff --git a/components/engine/daemon/config/config.go b/components/engine/daemon/config/config.go
+index 501c07a..394ce95 100644
+--- a/components/engine/daemon/config/config.go
++++ b/components/engine/daemon/config/config.go
+@@ -505,6 +505,11 @@ func Validate(config *Config) error {
+ 		return err
  	}
  
 +	// Add Clear containers runtime if possible
@@ -159,11 +157,11 @@ index 134fc67..7471366 100644
  	if defaultRuntime := config.GetDefaultRuntimeName(); defaultRuntime != "" && defaultRuntime != StockRuntimeName {
  		runtimes := config.GetAllRuntimes()
  		if _, ok := runtimes[defaultRuntime]; !ok {
-diff --git a/daemon/daemon_unix.go b/daemon/daemon_unix.go
-index 0f342bc..1a7df43 100644
---- a/daemon/daemon_unix.go
-+++ b/daemon/daemon_unix.go
-@@ -562,6 +562,10 @@ func verifyPlatformContainerSettings(daemon *Daemon, hostConfig *containertypes.
+diff --git a/components/engine/daemon/daemon_unix.go b/components/engine/daemon/daemon_unix.go
+index 80d8d55..cf74150 100644
+--- a/components/engine/daemon/daemon_unix.go
++++ b/components/engine/daemon/daemon_unix.go
+@@ -604,6 +604,10 @@ func verifyPlatformContainerSettings(daemon *Daemon, hostConfig *containertypes.
  			return warnings, fmt.Errorf("cgroup-parent for systemd cgroup should be a valid slice named as \"xxx.slice\"")
  		}
  	}
@@ -175,5 +173,5 @@ index 0f342bc..1a7df43 100644
  		hostConfig.Runtime = daemon.configStore.GetDefaultRuntimeName()
  	}
 -- 
-2.9.5
+2.15.0
 
