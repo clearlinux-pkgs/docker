@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 17.12.1
-Release  : 73
+Release  : 74
 URL      : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
 %global commit_libnetwork ed2130d117c11c542327b4d5216a5db36770bc65
