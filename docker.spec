@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 17.09.1
+Version  : 17.12.1
 Release  : 72
-URL      : https://github.com/docker/docker-ce/archive/v17.09.1-ce.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v17.09.1-ce.tar.gz
-%global commit_libnetwork 7b2b1feb1de4817d522cc372af149ff48d25028e
-Source1  : https://github.com/docker/libnetwork/archive/7b2b1feb1de4817d522cc372af149ff48d25028e.tar.gz
+URL      : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
+%global commit_libnetwork ed2130d117c11c542327b4d5216a5db36770bc65
+Source1  : https://github.com/docker/libnetwork/archive/ed2130d117c11c542327b4d5216a5db36770bc65.tar.gz
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -80,7 +80,7 @@ rm -rf %{buildroot}
 # install binary
 install -d %{buildroot}/usr/bin
 install -p -m 755 components/cli/build/docker-linux-amd64 %{buildroot}/usr/bin/docker
-install -p -m 755 components/engine/bundles/%{version}-ce/dynbinary-daemon/dockerd-%{version}-ce  %{buildroot}/usr/bin/dockerd
+install -p -m 755 components/engine/bundles/dynbinary-daemon/dockerd-%{version} %{buildroot}/usr/bin/dockerd
 #install docker-proxy
 install -p -m 755 libnetwork-%{commit_libnetwork}/docker-proxy  %{buildroot}/usr/bin/docker-proxy
 
