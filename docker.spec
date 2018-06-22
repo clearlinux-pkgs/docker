@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 17.12.1
-Release  : 75
+Release  : 76
 URL      : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
 %global commit_libnetwork ed2130d117c11c542327b4d5216a5db36770bc65
@@ -26,8 +26,6 @@ Requires : btrfs-progs
 Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
-Patch1   : 0001-Automatic-Clear-Containers-runtime-detection.patch
-Patch2   : 0002-Use-overlay2-as-the-default-storage-driver.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -42,8 +40,6 @@ Docker is an open source project to pack, ship and run any application as a ligh
 
 %prep
 %setup -q -n %docker_src_dir
-%patch1 -p1
-%patch2 -p1
 # docker-proxy
 tar -xf %{SOURCE1}
 
