@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 17.12.1
-Release  : 76
-URL      : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v17.12.1-ce.tar.gz
-%global commit_libnetwork ed2130d117c11c542327b4d5216a5db36770bc65
-Source1  : https://github.com/docker/libnetwork/archive/ed2130d117c11c542327b4d5216a5db36770bc65.tar.gz
+Version  : 18.05.0
+Release  : 77
+URL      : https://github.com/docker/docker-ce/archive/v18.05.0-ce.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v18.05.0-ce.tar.gz
+%global commit_libnetwork c15b372ef22125880d378167dde44f4b134e1a77
+Source1  : https://github.com/docker/libnetwork/archive/c15b372ef22125880d378167dde44f4b134e1a77.tar.gz
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -32,7 +32,7 @@ Requires : xfsprogs
 %define debug_package %{nil}
 %define __strip /bin/true
 
-%global commit_id 19e2cf6259bd7f027a3fff180876a22945ce4ba8
+%global commit_id f150324782643a5268a04e7d1a675587125da20e
 %global docker_src_dir %{name}-ce-%{version}-ce
 
 %description
