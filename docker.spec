@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 18.05.0
-Release  : 77
+Release  : 78
 URL      : https://github.com/docker/docker-ce/archive/v18.05.0-ce.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v18.05.0-ce.tar.gz
 %global commit_libnetwork c15b372ef22125880d378167dde44f4b134e1a77
@@ -26,6 +26,7 @@ Requires : btrfs-progs
 Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
+Patch01  : 0001-daemon.getSourceMount-fix-for-mount-point.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -42,6 +43,7 @@ Docker is an open source project to pack, ship and run any application as a ligh
 %setup -q -n %docker_src_dir
 # docker-proxy
 tar -xf %{SOURCE1}
+%patch01 -p1
 
 %build
 export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs'
