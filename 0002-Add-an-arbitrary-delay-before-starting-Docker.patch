@@ -1,0 +1,30 @@
+From 114b84a8c848d0a1f4b1f2f5729e6796509728e7 Mon Sep 17 00:00:00 2001
+From: Brooks Swinnerton <bswinnerton@gmail.com>
+Date: Wed, 15 Aug 2018 18:50:04 -0400
+Subject: [PATCH] Add an arbitrary delay before starting Docker
+
+Due to issues with `network-online.target` in Clear Linux, a race
+condition will occur between the Docker service starting before the
+network is ready with a routable IP address.
+
+This commit represents a temporary fix to delay the start of the Docker
+service by five seconds, giving the network a chance to start.
+---
+ components/packaging/rpm/systemd/docker.service | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/components/packaging/rpm/systemd/docker.service b/components/packaging/rpm/systemd/docker.service
+index 6c60646b56..5d5774838f 100644
+--- a/components/packaging/rpm/systemd/docker.service
++++ b/components/packaging/rpm/systemd/docker.service
+@@ -28,6 +28,7 @@ KillMode=process
+ Restart=on-failure
+ StartLimitBurst=3
+ StartLimitInterval=60s
++ExecStartPre=/bin/sleep 5
+ 
+ [Install]
+ WantedBy=multi-user.target
+-- 
+2.18.0
+
