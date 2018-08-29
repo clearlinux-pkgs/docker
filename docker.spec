@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 18.05.0
-Release  : 78
-URL      : https://github.com/docker/docker-ce/archive/v18.05.0-ce.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v18.05.0-ce.tar.gz
-%global commit_libnetwork c15b372ef22125880d378167dde44f4b134e1a77
-Source1  : https://github.com/docker/libnetwork/archive/c15b372ef22125880d378167dde44f4b134e1a77.tar.gz
+Version  : 18.06.1
+Release  : 79
+URL      : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
+%global commit_libnetwork d00ceed44cc447c77f25cdf5d59e83163bdcb4c9
+Source1  : https://github.com/docker/libnetwork/archive/d00ceed44cc447c77f25cdf5d59e83163bdcb4c9.tar.gz
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -26,14 +26,13 @@ Requires : btrfs-progs
 Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
-Patch01  : 0001-daemon.getSourceMount-fix-for-mount-point.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
 
-%global commit_id f150324782643a5268a04e7d1a675587125da20e
+%global commit_id e68fc7a215d7133c34aa18e3b72b4a21fd0c6136
 %global docker_src_dir %{name}-ce-%{version}-ce
 
 %description
@@ -43,7 +42,6 @@ Docker is an open source project to pack, ship and run any application as a ligh
 %setup -q -n %docker_src_dir
 # docker-proxy
 tar -xf %{SOURCE1}
-%patch01 -p1
 
 %build
 export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs'

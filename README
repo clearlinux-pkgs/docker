@@ -2,3 +2,4 @@ Updating docker:
 - Find commit ID for docker release
 - Get commit ID for libnetwork (see the components/engine/vendor.conf file)
 - Update Makefile + spec file with new versions and commit IDs
+- make generateupstream && make build
