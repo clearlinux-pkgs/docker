@@ -1,10 +1,11 @@
 Name     : docker
 Version  : 18.06.1
-Release  : 79
+Release  : 80
 URL      : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
 %global commit_libnetwork d00ceed44cc447c77f25cdf5d59e83163bdcb4c9
 Source1  : https://github.com/docker/libnetwork/archive/d00ceed44cc447c77f25cdf5d59e83163bdcb4c9.tar.gz
+Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -79,6 +80,7 @@ install -p -m 755 components/cli/build/docker-linux-amd64 %{buildroot}/usr/bin/d
 install -p -m 755 components/engine/bundles/dynbinary-daemon/dockerd-%{version} %{buildroot}/usr/bin/dockerd
 #install docker-proxy
 install -p -m 755 libnetwork-%{commit_libnetwork}/docker-proxy  %{buildroot}/usr/bin/docker-proxy
+install -m 0755 -D %{SOURCE2} %{buildroot}/usr/bin/
 
 # install containerd
 ln -s /usr/bin/containerd %{buildroot}/usr/bin/docker-containerd
@@ -101,11 +103,12 @@ chmod -x %{buildroot}/usr/share/man/man*/*
 %files
 %defattr(-,root,root,-)
 /usr/bin/docker
-/usr/bin/dockerd
 /usr/bin/docker-containerd
-/usr/bin/docker-containerd-shim
 /usr/bin/docker-containerd-ctr
-/usr/bin/docker-runc
+/usr/bin/docker-containerd-shim
 /usr/bin/docker-proxy
+/usr/bin/docker-runc
+/usr/bin/docker-set-default-runtime
+/usr/bin/dockerd
 /usr/lib/systemd/system/docker.service
 /usr/share/man/man*/*
