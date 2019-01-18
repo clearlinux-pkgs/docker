@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 18.06.1
-Release  : 80
+Release  : 81
 URL      : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
 %global commit_libnetwork d00ceed44cc447c77f25cdf5d59e83163bdcb4c9
@@ -28,6 +28,8 @@ Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
 
+Patch0 : CVE-2018-20699.patch
+
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
 %define debug_package %{nil}
@@ -41,6 +43,7 @@ Docker is an open source project to pack, ship and run any application as a ligh
 
 %prep
 %setup -q -n %docker_src_dir
+%patch0 -p1
 # docker-proxy
 tar -xf %{SOURCE1}
 
