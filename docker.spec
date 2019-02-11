@@ -90,7 +90,7 @@ install -m 0755 -D %{SOURCE2} %{buildroot}/usr/bin/
 # install containerd
 ln -s /usr/bin/containerd %{buildroot}/usr/bin/docker-containerd
 ln -s /usr/bin/containerd-shim %{buildroot}/usr/bin/docker-containerd-shim
-ln -s /usr/bin/containerd-ctr %{buildroot}/usr/bin/docker-containerd-ctr
+ln -s /usr/bin/ctr %{buildroot}/usr/bin/docker-containerd-ctr
 
 # install runc
 ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
