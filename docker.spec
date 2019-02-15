@@ -1,8 +1,8 @@
 Name     : docker
-Version  : 18.06.1
+Version  : 18.06.2
 Release  : 83
-URL      : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v18.06.1-ce.tar.gz
+URL      : https://github.com/docker/docker-ce/archive/v18.06.2-ce.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v18.06.2-ce.tar.gz
 %global commit_libnetwork d00ceed44cc447c77f25cdf5d59e83163bdcb4c9
 Source1  : https://github.com/docker/libnetwork/archive/d00ceed44cc447c77f25cdf5d59e83163bdcb4c9.tar.gz
 Source2  : docker-set-default-runtime
