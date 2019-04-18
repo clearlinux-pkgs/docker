@@ -16,6 +16,8 @@ BuildRequires : pkgconfig(devmapper)
 BuildRequires : btrfs-progs-devel
 BuildRequires : gzip
 BuildRequires : golang-github-cpuguy83-go-md2man
+BuildRequires : libseccomp-dev
+
 Requires : iptables
 Requires : git
 Requires : xz
@@ -50,14 +52,17 @@ Docker is an open source project to pack, ship and run any application as a ligh
 tar -xf %{SOURCE1}
 
 %build
-export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs'
+export DOCKER_BUILDTAGS="pkcs11 seccomp"
+export RUNC_BUILDTAGS="seccomp"
+
+export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs seccomp' 
 export GOPATH=/go
 
 mkdir -p /go/src/github.com/docker/
 rm -fr /go/src/github.com/docker/cli
 ln -s /builddir/build/BUILD/%docker_src_dir/components/cli /go/src/github.com/docker/cli
 pushd /go/src/github.com/docker/cli
-make VERSION=%version GITCOMMIT=%commit_id dynbinary manpages
+make VERSION=%version GITCOMMIT=%commit_id BUILDTAGS="exclude_graphdriver_aufs  seccomp"  dynbinary manpages
 popd
 rm -fr /go/src/github.com/docker/engine
 ln -s /builddir/build/BUILD/%docker_src_dir/components/engine /go/src/github.com/docker/engine
