@@ -1,8 +1,8 @@
 Name     : docker
-Version  : 18.06.2
-Release  : 86
-URL      : https://github.com/docker/docker-ce/archive/v18.06.2-ce.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v18.06.2-ce.tar.gz
+Version  : 18.06.3
+Release  : 87
+URL      : https://github.com/docker/docker-ce/archive/v18.06.3-ce.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v18.06.3-ce.tar.gz
 %global commit_libnetwork d00ceed44cc447c77f25cdf5d59e83163bdcb4c9
 Source1  : https://github.com/docker/libnetwork/archive/d00ceed44cc447c77f25cdf5d59e83163bdcb4c9.tar.gz
 Source2  : docker-set-default-runtime
@@ -38,7 +38,7 @@ Patch1 : 0001-simplify-logic-of-getting-docker-gid.patch
 %define debug_package %{nil}
 %define __strip /bin/true
 
-%global commit_id e68fc7a215d7133c34aa18e3b72b4a21fd0c6136
+%global commit_id d7080c17a580919f5340a15a8e5e013133089680
 %global docker_src_dir %{name}-ce-%{version}-ce
 
 %description
