@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 18.06.3
-Release  : 87
+Release  : 88
 URL      : https://github.com/docker/docker-ce/archive/v18.06.3-ce.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v18.06.3-ce.tar.gz
 %global commit_libnetwork d00ceed44cc447c77f25cdf5d59e83163bdcb4c9
