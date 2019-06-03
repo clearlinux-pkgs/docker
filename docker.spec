@@ -104,7 +104,7 @@ ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
 install -m 0644 -D ./components/packaging/rpm/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
 
 # install bash completion file.
-install -m 0644 -D ./components/cli/contrib/completion/bash/docker %{buildroot}/usr/share/bash_completion.d/docker
+install -m 0644 -D ./components/cli/contrib/completion/bash/docker %{buildroot}/usr/share/bash-completion/completions/docker
 
 # install man pages
 install -d %{buildroot}/usr/share/man/man1 %{buildroot}/usr/share/man/man5 %{buildroot}/usr/share/man/man8
@@ -124,5 +124,5 @@ chmod -x %{buildroot}/usr/share/man/man*/*
 /usr/bin/docker-set-default-runtime
 /usr/bin/dockerd
 /usr/lib/systemd/system/docker.service
-/usr/share/bash_completion.d/docker
+/usr/share/bash-completion/completions/docker
 /usr/share/man/man*/*
