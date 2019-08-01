@@ -33,6 +33,7 @@ Requires : xfsprogs
 Patch0 : CVE-2018-20699.patch
 Patch1 : 0001-simplify-logic-of-getting-docker-gid.patch
 Patch2 : CVE-2019-14271.patch
+Patch3 : CVE-2019-1020014.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -50,6 +51,7 @@ Docker is an open source project to pack, ship and run any application as a ligh
 %patch0 -p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 # docker-proxy
 tar -xf %{SOURCE1}
 
