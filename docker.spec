@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 18.06.3
-Release  : 90
-URL      : https://github.com/docker/docker-ce/archive/v18.06.3-ce.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v18.06.3-ce.tar.gz
-%global commit_libnetwork d00ceed44cc447c77f25cdf5d59e83163bdcb4c9
-Source1  : https://github.com/docker/libnetwork/archive/d00ceed44cc447c77f25cdf5d59e83163bdcb4c9.tar.gz
+Version  : 19.03.2
+Release  : 91
+URL      : https://github.com/docker/docker-ce/archive/v19.03.2.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v19.03.2.tar.gz
+%global commit_libnetwork fc5a7d91d54cc98f64fc28f9e288b46a0bee756c
+Source1  : https://github.com/docker/libnetwork/archive/fc5a7d91d54cc98f64fc28f9e288b46a0bee756c.tar.gz
 Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
@@ -30,28 +30,19 @@ Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
 
-Patch0 : CVE-2018-20699.patch
-Patch1 : 0001-simplify-logic-of-getting-docker-gid.patch
-Patch2 : CVE-2019-14271.patch
-Patch3 : CVE-2019-1020014.patch
-
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
 
-%global commit_id d7080c17a580919f5340a15a8e5e013133089680
-%global docker_src_dir %{name}-ce-%{version}-ce
+%global commit_id 6a30dfca03664a0b6bf0646a7d389ee7d0318e6e
+%global docker_src_dir %{name}-ce-%{version}
 
 %description
 Docker is an open source project to pack, ship and run any application as a lightweight container.
 
 %prep
 %setup -q -n %docker_src_dir
-%patch0 -p1
-%patch1 -p1
-%patch2 -p1
-%patch3 -p1
 # docker-proxy
 tar -xf %{SOURCE1}
 
@@ -105,7 +96,7 @@ ln -s /usr/bin/ctr %{buildroot}/usr/bin/docker-containerd-ctr
 ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
 
 # install systemd unit files
-install -m 0644 -D ./components/packaging/rpm/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
+install -m 0644 -D ./components/packaging/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
 
 # install bash completion file.
 install -m 0644 -D ./components/cli/contrib/completion/bash/docker %{buildroot}/usr/share/bash-completion/completions/docker
