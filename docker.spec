@@ -97,6 +97,7 @@ ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
 
 # install systemd unit files
 install -m 0644 -D ./components/packaging/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
+install -m 0644 -D ./components/packaging/systemd/docker.socket %{buildroot}/usr/lib/systemd/system/docker.socket
 
 # install bash completion file.
 install -m 0644 -D ./components/cli/contrib/completion/bash/docker %{buildroot}/usr/share/bash-completion/completions/docker
@@ -119,5 +120,6 @@ chmod -x %{buildroot}/usr/share/man/man*/*
 /usr/bin/docker-set-default-runtime
 /usr/bin/dockerd
 /usr/lib/systemd/system/docker.service
+/usr/lib/systemd/system/docker.socket
 /usr/share/bash-completion/completions/docker
 /usr/share/man/man*/*
