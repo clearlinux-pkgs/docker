@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 19.03.2
-Release  : 93
+Release  : 94
 URL      : https://github.com/docker/docker-ce/archive/v19.03.2.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v19.03.2.tar.gz
 %global commit_libnetwork fc5a7d91d54cc98f64fc28f9e288b46a0bee756c
@@ -51,17 +51,17 @@ export DOCKER_BUILDTAGS="pkcs11 seccomp"
 export RUNC_BUILDTAGS="seccomp"
 
 export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs seccomp' 
-export GOPATH=/go
+export GOPATH=$HOME/go
 
-mkdir -p /go/src/github.com/docker/
-rm -fr /go/src/github.com/docker/cli
-ln -s /builddir/build/BUILD/%docker_src_dir/components/cli /go/src/github.com/docker/cli
-pushd /go/src/github.com/docker/cli
+mkdir -p $HOME/go/src/github.com/docker/
+rm -fr $HOME/go/src/github.com/docker/cli
+ln -s /builddir/build/BUILD/%docker_src_dir/components/cli $HOME/go/src/github.com/docker/cli
+pushd $HOME/go/src/github.com/docker/cli
 make VERSION=%version GITCOMMIT=%commit_id BUILDTAGS="exclude_graphdriver_aufs  seccomp"  dynbinary manpages
 popd
-rm -fr /go/src/github.com/docker/engine
-ln -s /builddir/build/BUILD/%docker_src_dir/components/engine /go/src/github.com/docker/engine
-pushd /go/src/github.com/docker/engine
+rm -fr $HOME/go/src/github.com/docker/engine
+ln -s /builddir/build/BUILD/%docker_src_dir/components/engine $HOME/go/src/github.com/docker/engine
+pushd $HOME/go/src/github.com/docker/engine
 
 #./hack/dockerfile/install-binaries.sh runc-dynamic containerd-dynamic proxy-dynamic tini
 VERSION=%version ./hack/make.sh dynbinary
