@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 19.03.2
-Release  : 94
-URL      : https://github.com/docker/docker-ce/archive/v19.03.2.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v19.03.2.tar.gz
-%global commit_libnetwork fc5a7d91d54cc98f64fc28f9e288b46a0bee756c
-Source1  : https://github.com/docker/libnetwork/archive/fc5a7d91d54cc98f64fc28f9e288b46a0bee756c.tar.gz
+Version  : 19.03.6
+Release  : 95
+URL      : https://github.com/docker/docker-ce/archive/v19.03.6.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v19.03.6.tar.gz
+%global commit_libnetwork 9fd385be8302dbe1071a3ce124891893ff27f90f
+Source1  : https://github.com/docker/libnetwork/archive/9fd385be8302dbe1071a3ce124891893ff27f90f.tar.gz
 Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
@@ -35,7 +35,7 @@ Requires : xfsprogs
 %define debug_package %{nil}
 %define __strip /bin/true
 
-%global commit_id 6a30dfca03664a0b6bf0646a7d389ee7d0318e6e
+%global commit_id 369ce74a3ce86a392e39e45d3960ce970fdfac97
 %global docker_src_dir %{name}-ce-%{version}
 
 %description
