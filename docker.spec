@@ -1,8 +1,8 @@
 Name     : docker
-Version  : 19.03.6
-Release  : 95
-URL      : https://github.com/docker/docker-ce/archive/v19.03.6.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v19.03.6.tar.gz
+Version  : 19.03.8
+Release  : 96
+URL      : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
 %global commit_libnetwork 9fd385be8302dbe1071a3ce124891893ff27f90f
 Source1  : https://github.com/docker/libnetwork/archive/9fd385be8302dbe1071a3ce124891893ff27f90f.tar.gz
 Source2  : docker-set-default-runtime
@@ -17,7 +17,6 @@ BuildRequires : btrfs-progs-devel
 BuildRequires : gzip
 BuildRequires : golang-github-cpuguy83-go-md2man
 BuildRequires : libseccomp-dev
-
 Requires : iptables
 Requires : git
 Requires : xz
@@ -29,13 +28,14 @@ Requires : btrfs-progs
 Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
+Patch1: 0001-Use-systemd-cgroup.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
 %define debug_package %{nil}
 %define __strip /bin/true
 
-%global commit_id 369ce74a3ce86a392e39e45d3960ce970fdfac97
+%global commit_id afacb8b7f0d8d4f9d2a8e8736e9c993e672b41f3
 %global docker_src_dir %{name}-ce-%{version}
 
 %description
@@ -45,6 +45,8 @@ Docker is an open source project to pack, ship and run any application as a ligh
 %setup -q -n %docker_src_dir
 # docker-proxy
 tar -xf %{SOURCE1}
+
+%patch1 -p1
 
 %build
 export DOCKER_BUILDTAGS="pkcs11 seccomp"
