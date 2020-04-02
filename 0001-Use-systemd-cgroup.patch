@@ -1,0 +1,27 @@
+From 3e4feaeecd3b3436f9d2ecaf1b9e5eb4c6dff2d5 Mon Sep 17 00:00:00 2001
+From: William Douglas <william.douglas@intel.com>
+Date: Thu, 2 Apr 2020 13:10:01 -0700
+Subject: [PATCH] Use systemd cgroup
+
+In order to avoid two cgroup hierarchy managers running at once, have
+docker use the systemd cgroup.
+---
+ components/packaging/systemd/docker.service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/components/packaging/systemd/docker.service b/components/packaging/systemd/docker.service
+index 1be9bba..2699579 100644
+--- a/components/packaging/systemd/docker.service
++++ b/components/packaging/systemd/docker.service
+@@ -11,7 +11,7 @@ Type=notify
+ # the default is not to use systemd for cgroups because the delegate issues still
+ # exists and systemd currently does not support the cgroup feature set required
+ # for containers run by docker
+-ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock
++ExecStart=/usr/bin/dockerd -H fd:// --containerd=/run/containerd/containerd.sock --exec-opt native.cgroupdriver=systemd
+ ExecReload=/bin/kill -s HUP $MAINPID
+ TimeoutSec=0
+ RestartSec=2
+-- 
+2.26.0
+
