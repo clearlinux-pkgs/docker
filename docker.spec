@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 19.03.8
-Release  : 97
+Release  : 98
 URL      : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
 %global commit_libnetwork 9fd385be8302dbe1071a3ce124891893ff27f90f
@@ -76,7 +76,7 @@ pushd libnetwork-%{commit_libnetwork}
 mkdir -p src/github.com/docker/libnetwork
 ln -s $(pwd)/* src/github.com/docker/libnetwork
 export GOPATH=$(pwd)
-go build -ldflags="-linkmode=external" -o docker-proxy github.com/docker/libnetwork/cmd/proxy
+go build -ldflags="-linkmode=external" -buildmode=pie -o docker-proxy github.com/docker/libnetwork/cmd/proxy
 popd
 
 %install
