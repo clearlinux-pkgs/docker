@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 19.03.8
-Release  : 98
+Release  : 99
 URL      : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
 %global commit_libnetwork 9fd385be8302dbe1071a3ce124891893ff27f90f
