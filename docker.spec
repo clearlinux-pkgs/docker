@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 19.03.8
-Release  : 101
+Release  : 102
 URL      : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
 %global commit_libnetwork 9fd385be8302dbe1071a3ce124891893ff27f90f
@@ -29,6 +29,7 @@ Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
 Patch1: 0001-Use-systemd-cgroup.patch
+Patch2: 0001-github.com-creack-pty-bump-v1.1.7-to-v.1.1.10.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -47,6 +48,7 @@ Docker is an open source project to pack, ship and run any application as a ligh
 tar -xf %{SOURCE1}
 
 %patch1 -p1
+%patch2 -p1
 
 %build
 export DOCKER_BUILDTAGS="pkcs11 seccomp"
