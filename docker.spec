@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 19.03.8
-Release  : 102
-URL      : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
-Source0  : https://github.com/docker/docker-ce/archive/v19.03.8.tar.gz
-%global commit_libnetwork 9fd385be8302dbe1071a3ce124891893ff27f90f
-Source1  : https://github.com/docker/libnetwork/archive/9fd385be8302dbe1071a3ce124891893ff27f90f.tar.gz
+Version  : 19.03.13
+Release  : 103
+URL      : https://github.com/docker/docker-ce/archive/v19.03.13.tar.gz
+Source0  : https://github.com/docker/docker-ce/archive/v19.03.13.tar.gz
+%global commit_libnetwork 026aabaa659832804b01754aaadd2c0f420c68b6
+Source1  : https://github.com/docker/libnetwork/archive/026aabaa659832804b01754aaadd2c0f420c68b6.tar.gz
 Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
