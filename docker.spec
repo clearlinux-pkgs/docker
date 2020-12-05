@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 19.03.13
-Release  : 103
+Release  : 104
 URL      : https://github.com/docker/docker-ce/archive/v19.03.13.tar.gz
 Source0  : https://github.com/docker/docker-ce/archive/v19.03.13.tar.gz
 %global commit_libnetwork 026aabaa659832804b01754aaadd2c0f420c68b6
