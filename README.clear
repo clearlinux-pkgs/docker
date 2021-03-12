@@ -1,5 +1,16 @@
+Starting with the Docker 20.10 release, packages for the Docker Engine and
+Docker CLI are built directly from their respective source repositories
+instead of from the single repository.
+
+Practically this means:
+This repository is no longer the “source of truth” for Docker CE builds.
+The commit SHA and tag for the Docker Engine will come from the moby/moby
+repository.
+
+This package MUST be upgraded in sync with 'docker-cli'
+
 Updating docker:
 - Find commit ID for docker release
-- Get commit ID for libnetwork (see the components/engine/vendor.conf file)
+- Get commit ID for libnetwork (see the vendor.conf file)
 - Update Makefile + spec file with new versions and commit IDs
 - make generateupstream && make build

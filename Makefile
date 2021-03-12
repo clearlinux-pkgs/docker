@@ -1,4 +1,4 @@
 PKG_NAME := docker
-URL = https://github.com/docker/docker-ce/archive/v19.03.13/docker-ce-19.03.13.tar.gz
+URL = https://github.com/moby/moby/archive/v20.10.5.tar.gz
 
 include ../common/Makefile.common
