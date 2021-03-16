@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 20.10.5
-Release  : 108
+Release  : 109
 URL      : https://github.com/moby/moby/archive/v20.10.5.tar.gz
 Source0  : https://github.com/moby/moby/archive/v20.10.5.tar.gz
 %global commit_libnetwork fa125a3512ee0f6187721c88582bf8c4378bd4d7
