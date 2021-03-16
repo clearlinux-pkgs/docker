@@ -4,7 +4,7 @@ Release  : 109
 URL      : https://github.com/moby/moby/archive/v20.10.5.tar.gz
 Source0  : https://github.com/moby/moby/archive/v20.10.5.tar.gz
 %global commit_libnetwork fa125a3512ee0f6187721c88582bf8c4378bd4d7
-Source1  : https://github.com/docker/libnetwork/archive/%{commit_libnetwork}.tar.gz
+Source1  : https://github.com/docker/libnetwork/archive/fa125a3512ee0f6187721c88582bf8c4378bd4d7.tar.gz
 Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
