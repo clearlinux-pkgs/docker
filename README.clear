@@ -10,7 +10,8 @@ repository.
 This package MUST be upgraded in sync with 'docker-cli'
 
 Updating docker:
-- Find commit ID for docker release
+- Find new release version for moby release
 - Get commit ID for libnetwork (see the vendor.conf file)
+    grep github.com/docker/libnetwork moby-20.*.*/vendor.conf
 - Update Makefile + spec file with new versions and commit IDs
 - make generateupstream && make build

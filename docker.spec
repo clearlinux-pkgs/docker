@@ -1,10 +1,10 @@
 Name     : docker
-Version  : 20.10.5
-Release  : 112
-URL      : https://github.com/moby/moby/archive/v20.10.5.tar.gz
-Source0  : https://github.com/moby/moby/archive/v20.10.5.tar.gz
-%global commit_libnetwork fa125a3512ee0f6187721c88582bf8c4378bd4d7
-Source1  : https://github.com/docker/libnetwork/archive/fa125a3512ee0f6187721c88582bf8c4378bd4d7.tar.gz
+Version  : 20.10.6
+Release  : 113
+URL      : https://github.com/moby/moby/archive/v20.10.6.tar.gz
+Source0  : https://github.com/moby/moby/archive/v20.10.6.tar.gz
+%global commit_libnetwork b3507428be5b458cb0e2b4086b13531fb0706e46
+Source1  : https://github.com/docker/libnetwork/archive/b3507428be5b458cb0e2b4086b13531fb0706e46.tar.gz
 Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
