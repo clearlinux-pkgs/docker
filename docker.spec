@@ -55,7 +55,7 @@ export DOCKER_BUILDTAGS="pkcs11 seccomp"
 export RUNC_BUILDTAGS="seccomp"
 
 export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs seccomp' 
-export GOPATH=$HOME/go
+export GOPATH=$HOME/go GO111MODULE="auto"
 
 mkdir -p $HOME/go/src/github.com/docker/
 rm -fr $HOME/go/src/github.com/docker/engine
