@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 20.10.11
-Release  : 123
+Release  : 124
 URL      : https://github.com/moby/moby/archive/v20.10.11.tar.gz
 Source0  : https://github.com/moby/moby/archive/v20.10.11.tar.gz
 %global commit_libnetwork 64b7a4574d1426139437d20e81c0b6d391130ec8
