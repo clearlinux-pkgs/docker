@@ -1,8 +1,8 @@
 Name     : docker
-Version  : 20.10.11
+Version  : 20.10.17
 Release  : 132
-URL      : https://github.com/moby/moby/archive/v20.10.11.tar.gz
-Source0  : https://github.com/moby/moby/archive/v20.10.11.tar.gz
+URL      : https://github.com/moby/moby/archive/v20.10.17.tar.gz
+Source0  : https://github.com/moby/moby/archive/v20.10.17.tar.gz
 %global commit_libnetwork 64b7a4574d1426139437d20e81c0b6d391130ec8
 Source1  : https://github.com/docker/libnetwork/archive/64b7a4574d1426139437d20e81c0b6d391130ec8.tar.gz
 Source2  : docker-set-default-runtime
