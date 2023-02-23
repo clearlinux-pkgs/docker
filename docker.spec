@@ -1,10 +1,11 @@
 Name     : docker
-Version  : 20.10.17
-Release  : 138
-URL      : https://github.com/moby/moby/archive/v20.10.17.tar.gz
-Source0  : https://github.com/moby/moby/archive/v20.10.17.tar.gz
-%global commit_libnetwork 64b7a4574d1426139437d20e81c0b6d391130ec8
-Source1  : https://github.com/docker/libnetwork/archive/64b7a4574d1426139437d20e81c0b6d391130ec8.tar.gz
+Version  : 20.10.23
+Release  : 139
+URL      : https://github.com/moby/moby/archive/v20.10.23.tar.gz
+Source0  : https://github.com/moby/moby/archive/v20.10.23.tar.gz
+%global commit_id 6051f142912a5c06064e96b92de5e4e8f052131b
+%global commit_libnetwork 05b93e0d3a95952f70c113b0bc5bdb538d7afdd7
+Source1  : https://github.com/docker/libnetwork/archive/05b93e0d3a95952f70c113b0bc5bdb538d7afdd7.tar.gz
 Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
@@ -37,7 +38,6 @@ Patch1: 0001-Use-systemd-cgroup.patch
 %define __strip /bin/true
 
 # Commit ID of the version release
-%global commit_id 363e9a88a11be517d9e8c65c998ff56f774eb4dc
 %global docker_src_dir moby-%{version}
 
 %description
@@ -56,6 +56,7 @@ export RUNC_BUILDTAGS="seccomp"
 
 export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs seccomp' 
 export GOPATH=$HOME/go GO111MODULE="auto"
+unset CLEAR_DEBUG_TERSE
 
 mkdir -p $HOME/go/src/github.com/docker/
 rm -fr $HOME/go/src/github.com/docker/engine
