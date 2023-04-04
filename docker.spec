@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 20.10.23
-Release  : 140
+Release  : 141
 URL      : https://github.com/moby/moby/archive/v20.10.23.tar.gz
 Source0  : https://github.com/moby/moby/archive/v20.10.23.tar.gz
 %global commit_id 6051f142912a5c06064e96b92de5e4e8f052131b
