@@ -1,11 +1,11 @@
 Name     : docker
-Version  : 20.10.23
-Release  : 143
-URL      : https://github.com/moby/moby/archive/v20.10.23.tar.gz
-Source0  : https://github.com/moby/moby/archive/v20.10.23.tar.gz
-%global commit_id 6051f142912a5c06064e96b92de5e4e8f052131b
-%global commit_libnetwork 05b93e0d3a95952f70c113b0bc5bdb538d7afdd7
-Source1  : https://github.com/docker/libnetwork/archive/05b93e0d3a95952f70c113b0bc5bdb538d7afdd7.tar.gz
+Version  : 24.0.2
+Release  : 144
+URL      : https://github.com/moby/moby/archive/v24.0.2.tar.gz
+Source0  : https://github.com/moby/moby/archive/v24.0.2.tar.gz
+%global commit_id da05a2ef7f104ed6da25a1d28118b6b585134f20
+%global commit_libnetwork d0951081b35fa4216fc4f0064bf065beeb55a74b
+Source1  : https://github.com/docker/libnetwork/archive/d0951081b35fa4216fc4f0064bf065beeb55a74b.tar.gz
 Source2  : docker-set-default-runtime
 Summary  : the open-source application container engine
 Group    : Development/Tools
@@ -30,7 +30,6 @@ Requires : btrfs-progs
 Requires : e2fsprogs
 Requires : e2fsprogs-extras
 Requires : xfsprogs
-Patch1: 0001-Use-systemd-cgroup.patch
 
 # don't strip, these are not ordinary object files
 %global __os_install_post %{nil}
@@ -47,8 +46,6 @@ Docker is an open source project to pack, ship and run any application as a ligh
 %setup -q -n %docker_src_dir
 # docker-proxy
 tar -xf %{SOURCE1}
-
-%patch1 -p1
 
 %build
 export DOCKER_BUILDTAGS="pkcs11 seccomp"
@@ -81,22 +78,24 @@ popd
 rm -rf %{buildroot}
 # install binary
 install -d %{buildroot}/usr/bin
-install -p -m 755 bundles/dynbinary-daemon/dockerd-%{version} %{buildroot}/usr/bin/dockerd
+install -p -m 755 bundles/dynbinary-daemon/dockerd %{buildroot}/usr/bin/dockerd
 #install docker-proxy
 install -p -m 755 libnetwork-%{commit_libnetwork}/docker-proxy  %{buildroot}/usr/bin/docker-proxy
 install -m 0755 -D %{SOURCE2} %{buildroot}/usr/bin/
 
 # install containerd
-ln -s /usr/bin/containerd %{buildroot}/usr/bin/docker-containerd
-ln -s /usr/bin/containerd-shim %{buildroot}/usr/bin/docker-containerd-shim
-ln -s /usr/bin/ctr %{buildroot}/usr/bin/docker-containerd-ctr
+ln -s containerd %{buildroot}/usr/bin/docker-containerd
+ln -s containerd-shim %{buildroot}/usr/bin/docker-containerd-shim
+ln -s ctr %{buildroot}/usr/bin/docker-containerd-ctr
 
 # install runc
-ln -s /usr/bin/runc %{buildroot}/usr/bin/docker-runc
+ln -s runc %{buildroot}/usr/bin/docker-runc
 
 # install systemd unit files
 install -m 0644 -D ./contrib/init/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
 install -m 0644 -D ./contrib/init/systemd/docker.socket %{buildroot}/usr/lib/systemd/system/docker.socket
+# install udev rule
+install -m 0644 -D ./contrib/udev/80-docker.rules %{buildroot}/usr/lib/udev/rules.d/80-docker.rules
 
 %files
 %defattr(-,root,root,-)
@@ -109,3 +108,4 @@ install -m 0644 -D ./contrib/init/systemd/docker.socket %{buildroot}/usr/lib/sys
 /usr/bin/dockerd
 /usr/lib/systemd/system/docker.service
 /usr/lib/systemd/system/docker.socket
+/usr/lib/udev/rules.d/80-docker.rules
