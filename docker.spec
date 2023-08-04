@@ -1,6 +1,6 @@
 Name     : docker
 Version  : 24.0.2
-Release  : 144
+Release  : 145
 URL      : https://github.com/moby/moby/archive/v24.0.2.tar.gz
 Source0  : https://github.com/moby/moby/archive/v24.0.2.tar.gz
 %global commit_id da05a2ef7f104ed6da25a1d28118b6b585134f20
