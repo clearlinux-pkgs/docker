@@ -1,12 +1,9 @@
 Name     : docker
-Version  : 24.0.2
-Release  : 145
-URL      : https://github.com/moby/moby/archive/v24.0.2.tar.gz
-Source0  : https://github.com/moby/moby/archive/v24.0.2.tar.gz
-%global commit_id da05a2ef7f104ed6da25a1d28118b6b585134f20
-%global commit_libnetwork d0951081b35fa4216fc4f0064bf065beeb55a74b
-Source1  : https://github.com/docker/libnetwork/archive/d0951081b35fa4216fc4f0064bf065beeb55a74b.tar.gz
-Source2  : docker-set-default-runtime
+Version  : 24.0.5
+Release  : 146
+URL      : https://github.com/moby/moby/archive/v24.0.5.tar.gz
+Source0  : https://github.com/moby/moby/archive/v24.0.5.tar.gz
+%global commit_id a61e2b4c9c5f7c241aeb37f389b4444aee26bea4
 Summary  : the open-source application container engine
 Group    : Development/Tools
 License  : Apache-2.0
@@ -16,7 +13,6 @@ BuildRequires : pkgconfig(sqlite3)
 BuildRequires : pkgconfig(devmapper)
 BuildRequires : btrfs-progs-devel
 BuildRequires : gzip
-BuildRequires : golang-github-cpuguy83-go-md2man
 BuildRequires : libseccomp-dev
 Requires : docker-cli = %{version}
 Requires : iptables
@@ -44,35 +40,14 @@ Docker is an open source project to pack, ship and run any application as a ligh
 
 %prep
 %setup -q -n %docker_src_dir
-# docker-proxy
-tar -xf %{SOURCE1}
 
 %build
-export DOCKER_BUILDTAGS="pkcs11 seccomp"
-export RUNC_BUILDTAGS="seccomp"
-
-export DOCKER_GITCOMMIT=%commit_id AUTO_GOPATH=1 DOCKER_BUILDTAGS='exclude_graphdriver_aufs seccomp' 
-export GOPATH=$HOME/go GO111MODULE="auto"
+export DOCKER_BUILDTAGS='exclude_graphdriver_aufs seccomp'
+export DOCKER_GITCOMMIT=%commit_id
 unset CLEAR_DEBUG_TERSE
 
-mkdir -p $HOME/go/src/github.com/docker/
-rm -fr $HOME/go/src/github.com/docker/engine
-ln -s /builddir/build/BUILD/%docker_src_dir $HOME/go/src/github.com/docker/engine
-pushd $HOME/go/src/github.com/docker/engine
-
 #./hack/dockerfile/install-binaries.sh runc-dynamic containerd-dynamic proxy-dynamic tini
-VERSION=%version ./hack/make.sh dynbinary
-popd
-# generate man pages
-#PATH="$PATH:$(pwd)" ./man/md2man-all.sh
-
-# docker-proxy
-pushd libnetwork-%{commit_libnetwork}
-mkdir -p src/github.com/docker/libnetwork
-ln -s $(pwd)/* src/github.com/docker/libnetwork
-export GOPATH=$(pwd)
-go build -ldflags="-linkmode=external" -buildmode=pie -o docker-proxy github.com/docker/libnetwork/cmd/proxy
-popd
+GO111MODULE="auto" AUTO_GOPATH=1 VERSION=%version ./hack/make.sh dynbinary
 
 %install
 rm -rf %{buildroot}
@@ -80,16 +55,7 @@ rm -rf %{buildroot}
 install -d %{buildroot}/usr/bin
 install -p -m 755 bundles/dynbinary-daemon/dockerd %{buildroot}/usr/bin/dockerd
 #install docker-proxy
-install -p -m 755 libnetwork-%{commit_libnetwork}/docker-proxy  %{buildroot}/usr/bin/docker-proxy
-install -m 0755 -D %{SOURCE2} %{buildroot}/usr/bin/
-
-# install containerd
-ln -s containerd %{buildroot}/usr/bin/docker-containerd
-ln -s containerd-shim %{buildroot}/usr/bin/docker-containerd-shim
-ln -s ctr %{buildroot}/usr/bin/docker-containerd-ctr
-
-# install runc
-ln -s runc %{buildroot}/usr/bin/docker-runc
+install -p -m 755 bundles/dynbinary-daemon/docker-proxy  %{buildroot}/usr/bin/docker-proxy
 
 # install systemd unit files
 install -m 0644 -D ./contrib/init/systemd/docker.service %{buildroot}/usr/lib/systemd/system/docker.service
@@ -99,12 +65,7 @@ install -m 0644 -D ./contrib/udev/80-docker.rules %{buildroot}/usr/lib/udev/rule
 
 %files
 %defattr(-,root,root,-)
-/usr/bin/docker-containerd
-/usr/bin/docker-containerd-ctr
-/usr/bin/docker-containerd-shim
 /usr/bin/docker-proxy
-/usr/bin/docker-runc
-/usr/bin/docker-set-default-runtime
 /usr/bin/dockerd
 /usr/lib/systemd/system/docker.service
 /usr/lib/systemd/system/docker.socket
