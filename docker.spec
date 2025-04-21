@@ -7,7 +7,7 @@
 #
 Name     : docker
 Version  : 27.4.1
-Release  : 151
+Release  : 152
 URL      : https://github.com/moby/moby/archive/v27.4.1/moby-27.4.1.tar.gz
 Source0  : https://github.com/moby/moby/archive/v27.4.1/moby-27.4.1.tar.gz
 %global commit_id c710b88579fcb5e0d53f96dcae976d79323b9166
